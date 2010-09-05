@@ -1,10 +1,5 @@
-task :build do
-  puts "Building"
-end
-
-task :deploy => [:build] do
-  puts "Deploying"
-end
+require 'bundler'
+Bundler::GemHelper.install_tasks
 
 namespace :test do
   desc "Run all the tests"  
