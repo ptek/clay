@@ -9,7 +9,8 @@ module Goo
   VERSION = "0.1"
   
   def self.init
-    puts "creating the structure"
+    print "creating the structure ..."
+    puts " complete"
   end
   
   def self.build

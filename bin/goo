@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-require 'src/goo.rb'
+require 'goo'
 
 usage = <<HELP
 USAGE:

@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-require "src/goo"
+require "lib/goo"
 
 Gem::Specification.new do |s|
   s.name        = "goo"
@@ -18,5 +18,5 @@ Gem::Specification.new do |s|
 
   s.files        = `git ls-files`.split("\n")
   s.executables  = `git ls-files`.split("\n").map{|f| f =~ /^bin\/(.*)/ ? $1 : nil}.compact
-  s.require_path = 'src'
+  s.require_path = 'lib'
 end
