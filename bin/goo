@@ -1,0 +1,26 @@
+#!/usr/bin/env ruby
+require 'src/goo.rb'
+
+usage = <<HELP
+USAGE:
+  $ goo <command>
+  
+COMMANDS:
+  init    - creates a directory structure for the project
+  build   - builds the projects and creates the set of resulting static pages
+  serve   - starts a local server
+HELP
+
+if ARGV.empty? 
+  puts usage
+  exit 1
+end
+
+command = ARGV[0]
+
+case command
+  when "init" then Goo.init
+  when "build" then Goo.build
+  when "serve" then Goo.serve
+  else puts usage
+end
