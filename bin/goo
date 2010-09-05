@@ -1,4 +1,7 @@
 #!/usr/bin/env ruby
+$:.unshift File.join(File.dirname(__FILE__), *%w[.. src]) # add ../src dir to the path of required modules
+
+require 'rubygems'
 require 'goo'
 
 usage = <<HELP
@@ -11,16 +14,16 @@ COMMANDS:
   serve   - starts a local server
 HELP
 
-if ARGV.empty? 
-  puts usage
-  exit 1
-end
-
 command = ARGV[0]
-
 case command
-  when "init" then Goo.init
+  when "init" then 
+    if ARGV[1].nil?
+      puts "USAGE:\n $goo init <site_name> "
+    else
+      Goo.init ARGV[1]
+    end
   when "build" then Goo.build
   when "serve" then Goo.serve
+  when "version" then puts "goo " + Goo::VERSION
   else puts usage
 end

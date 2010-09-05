@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
-require "lib/goo"
+require "src/goo"
 
-Gem::Specification.new do |s|
+spec = Gem::Specification.new do |s|
   s.name        = "goo"
   s.version     = Goo::VERSION
   s.platform    = Gem::Platform::RUBY
@@ -14,9 +14,9 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = ">= 1.3.6"
   s.rubyforge_project         = "goo"
 
-  s.add_development_dependency "bundler", ">= 1.0.0.rc.6"
+  s.add_development_dependency "bundler", "~> 1.0"
 
   s.files        = `git ls-files`.split("\n")
-  s.executables  = `git ls-files`.split("\n").map{|f| f =~ /^bin\/(.*)/ ? $1 : nil}.compact
-  s.require_path = 'lib'
+  s.executables  = ["goo"] #`git ls-files`.split("\n").map{|f| f =~ /^bin\/(.*)/ ? $1 : nil}.compact
+  s.require_path = 'src'
 end
