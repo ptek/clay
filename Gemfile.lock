@@ -16,8 +16,6 @@ GEM
     rspec-mocks (2.0.0)
       rspec-core (= 2.0.0)
       rspec-expectations (= 2.0.0)
-    shotgun (0.8)
-      rack (>= 1.0)
 
 PLATFORMS
   ruby
@@ -28,4 +26,3 @@ DEPENDENCIES
   rake
   rdiscount
   rspec
-  shotgun

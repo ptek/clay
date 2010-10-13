@@ -31,10 +31,9 @@ module Clay
   end
   
   def self.serve
-    puts "starting server"
-    while true do
-      
-    end
+    puts "starting server on port 9393. Press ^C to terminate."
+    File.open("config.ru"){|f| f.write "require 'rack/clay'\nrun Rack::Clay.new"} unless File.exists? "config.ru"
+    `rackup -p 9393`
   end
 end
 
