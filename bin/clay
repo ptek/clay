@@ -2,15 +2,15 @@
 $:.unshift File.join(File.dirname(__FILE__), *%w[.. src]) # add ../src dir to the path of required modules
 
 require 'rubygems'
-require 'goo'
+require 'clay'
 
 usage = <<HELP
 USAGE:
-  $ goo <command>
+  $ clay <command>
   
 COMMANDS:
   init    - creates a directory structure for the project
-  build   - builds the projects and creates the set of resulting static pages
+  form    - forms a set of static pages from the project
   serve   - starts a local server
 HELP
 
@@ -18,12 +18,12 @@ command = ARGV[0]
 case command
   when "init" then 
     if ARGV[1].nil?
-      puts "USAGE:\n $goo init <site_name> "
+      puts "USAGE:\n $ clay init <site_name> "
     else
-      Goo.init ARGV[1]
+      Clay.init ARGV[1]
     end
-  when "build" then Goo.build
-  when "serve" then Goo.serve
-  when "version" then puts "goo " + Goo::VERSION
+  when "form" then Clay.form
+  when "serve" then Clay.serve
+  when "version" then puts "clay ver.: " + Goo::VERSION
   else puts usage
 end

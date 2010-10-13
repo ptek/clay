@@ -4,7 +4,7 @@ require 'bundler'
 Bundler::GemHelper.install_tasks
 
 def gemspec_file
-  'goo.gemspec'
+  'clay.gemspec'
 end
 
 def gemspec
@@ -13,34 +13,44 @@ def gemspec
   end
 end
 
-desc "Uninstall #{gemspec.name}-#{gemspec.version} gem from the system gems"
-task :uninstall do
-  sh %{gem uninstall goo -x -v #{gemspec.version}}
-end
-
 namespace :test do
   desc "Run all the tests"  
-  task :all => [:u, :a]
+  task :all => [:unit, :acceptance]
   
   desc "Run the unit tests"
-  task :u do
-    sh "bundle exec spec --color tests/unit"
+  task :unit do
+    sh "bundle exec rspec --color tests/unit"
   end
   
   desc "Run the acceptance tests"
-  task :a do
-    sh "bundle exec spec --color tests/acceptance"
+  task :acceptance do
+    sh "bundle exec rspec --color tests/acceptance"
   end
 end
 
 namespace :gems do
   desc "Update the dependencies for this application"
-  task :u do
+  task :update do
     sh "bundle update"
   end
   
   desc "Install the dependencies"
-  task :i do
+  task :install do
     sh "bundle install"
   end
+end
+
+task :build do
+  #handled by bundler mixins
+  #sh "gem build #{gemspec_file} && mv -f #{gemspec.name}-#{gemspec.version}.gem pkg"
+end
+
+task :install do
+  #handled by bundler mixins
+  #sh "gem install pkg/#{gemspec.name}-#{gemspec.version}.gem"
+end
+
+desc "Uninstall #{gemspec.name}-#{gemspec.version} gem from the system gems"
+task :uninstall do
+  sh %{gem uninstall clay -x -v #{gemspec.version}}
 end
