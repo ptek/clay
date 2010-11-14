@@ -11,7 +11,7 @@ USAGE:
 COMMANDS:
   init    - creates a directory structure for the project
   form    - forms a set of static pages from the project
-  serve   - starts a local server
+  run   - starts a local server
 HELP
 
 command = ARGV[0]
@@ -23,7 +23,7 @@ case command
       Clay.init ARGV[1]
     end
   when "form" then Clay.form
-  when "serve" then Clay.serve
+  when "run" then Clay.run
   when "version" then puts "clay ver.: " + Goo::VERSION
   else puts usage
 end

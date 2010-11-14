@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.add_dependency "mustache", "~> 0.11"
   s.add_dependency "rdiscount"
   s.add_dependency "rack"
-  s.add_dependency "shotgun"
+  s.add_dependency "passenger"
 
   s.add_development_dependency "bundler", "~> 1.0"
   s.add_development_dependency "rspec"
