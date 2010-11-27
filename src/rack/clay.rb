@@ -85,7 +85,7 @@ module Rack
         old_file_hashes = ::File.read(clayfile)
         new_file_hashes = get_file_hashes
         changes = compare_file_hashes old_file_hashes, new_file_hashes.to_json
-        unless changes || ::Dir[@path + "/**/*"].empty?
+        unless changes
           begin                                   
             require 'clay'                        
             ::Clay.form                           
@@ -108,8 +108,6 @@ module Rack
     end
 
     def compare_file_hashes old, new
-      require 'clay'
-      puts Diff.new(new, old)
       old == new
     end
   end

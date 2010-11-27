@@ -5,29 +5,25 @@ require 'rdiscount'
 require 'fileutils'
 require 'yaml'
 
-require File.join(File.dirname(__FILE__), 'diff')
-
 module Clay
   VERSION = "0.4"
   
   def self.init project_name
-    print "creating the structure ..."
+    print "Creating the folder structure... "
     Project.init project_name
-    puts " complete"
+    puts "complete"
   end
   
   def self.form
-    print "Forming site ..."
+    print "Forming... "
     Project.check_consistency
-    Project.prepare_for_build
-    Project.render_pages
-    Project.publish_public_directory
-    puts " complete."
+    Project.build
+    puts "complete."
   end
   
   def self.run
-    puts "starting server on http://localhost:9292/"
-    Project.prepare_server_config
+    puts "Starting server on http://localhost:9292/"
+    Project.prepare_rack_config
     `rackup config.ru`
   end
 end
@@ -39,29 +35,20 @@ class Project
       check_consistency
     end
   end
-  
+
   def self.check_consistency
-    is_clay_project? and layouts_exist? and pages_exist?
+    init_clay_project? and layouts_exist? and pages_exist? and public_exist?
   end
-  
-  def self.prepare_for_build
+    
+  def self.build
     unless File.directory?("build")
       create_directory "build"
     end
+    publish_public
+    publish_pages
   end
-  
-  def self.render_pages
-    Dir.glob("pages/*.*").each { |page|
-      template = Template.parse(File.read(page))
-      File.open(File.join("build/", File.basename(page)), "w") {|f| f.write template.render }
-    }
-  end
-  
-  def self.publish_public_directory
-    FileUtils.cp_r(Dir.glob("public/*"), "build")
-  end
-  
-  def self.prepare_server_config
+    
+  def self.prepare_rack_config
     unless File.exists? "config.ru"
       file = File.open("config.ru", "w")
       file.write "require 'rack/clay'\nrun Rack::Clay.new"
@@ -71,27 +58,45 @@ class Project
   
   private
   
-  def self.is_clay_project?
+  def self.init_clay_project?
     `touch .clay` unless File.exists? ".clay"
   end
   
   def self.layouts_exist?
-    unless File.directory?("layouts")
-      puts "Layouts directory does not exist. Trying to create it."
-      create_directory "layouts"
-    end
+    create_directory "layouts"
   end
   
   def self.pages_exist?
-    unless File.directory?("pages")
-      puts "Pages directory does not exist. Trying to create it."
-      create_directory "pages"
-    end
+    create_directory "pages"
+  end
+
+  def self.public_exist?
+    create_directory "public"
   end
   
-  def self.create_directory name
-    FileUtils.mkdir name
+  def self.create_directory dirname
+    return if dirname.nil? || dirname.empty?
+    unless File.directory?(dirname)
+      puts "#{dirname} must be a directory"
+      FileUtils.rm_rf dirname
+    end
+    unless File.exists?(dirname)
+      puts "Creating directory: #{dirname}"
+      FileUtils.mkdir dirname
+    end
   end
+
+  def self.publish_pages
+    Dir.glob("pages/*.*").each { |page|
+      template = Template.parse(File.read(page))
+      File.open(File.join("build/", File.basename(page)), "w") {|f| f.write template.render }
+    }
+  end
+
+  def self.publish_public
+    FileUtils.cp_r(Dir.glob("public/*"), "build")
+  end
+
 end
 
 class Layout
