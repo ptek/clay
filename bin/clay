@@ -11,7 +11,7 @@ USAGE:
 COMMANDS:
   init    - creates a directory structure for the project
   form    - forms a set of static pages from the project
-  run   - starts a local server
+  run     - starts a local server
 HELP
 
 command = ARGV[0]

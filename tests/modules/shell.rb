@@ -1,5 +1,4 @@
 require 'fileutils'
-require 'tmpdir'
 
 module Shell
   
@@ -17,8 +16,8 @@ module Shell
   
   def self.files_exist filelist
     filelist.each do |file|
-      unless File.exist?(dir)
-        raise "Directory #{dir} do not exist."
+      unless File.exist?(file)
+        raise "File #{file} do not exist.\nWorking dir is #{`pwd`}"
       end
     end
   end

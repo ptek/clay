@@ -6,8 +6,8 @@ GEM
     fastthread (1.0.7)
     file-tail (1.0.5)
       spruz (>= 0.1.0)
-    mustache (0.11.2)
-    passenger (3.0.0)
+    mustache (0.12.0)
+    passenger (3.0.2)
       daemon_controller (>= 0.2.5)
       fastthread (>= 1.0.1)
       file-tail
@@ -16,17 +16,15 @@ GEM
     rack (1.2.1)
     rake (0.8.7)
     rdiscount (1.6.5)
-    rspec (2.0.0)
-      rspec-core (= 2.0.0)
-      rspec-expectations (= 2.0.0)
-      rspec-mocks (= 2.0.0)
-    rspec-core (2.0.0)
-    rspec-expectations (2.0.0)
-      diff-lcs (>= 1.1.2)
-    rspec-mocks (2.0.0)
-      rspec-core (= 2.0.0)
-      rspec-expectations (= 2.0.0)
-    spruz (0.1.5)
+    rspec (2.3.0)
+      rspec-core (~> 2.3.0)
+      rspec-expectations (~> 2.3.0)
+      rspec-mocks (~> 2.3.0)
+    rspec-core (2.3.1)
+    rspec-expectations (2.3.0)
+      diff-lcs (~> 1.1.2)
+    rspec-mocks (2.3.0)
+    spruz (0.2.2)
 
 PLATFORMS
   ruby
@@ -34,7 +32,6 @@ PLATFORMS
 DEPENDENCIES
   mustache (~> 0.11)
   passenger (~> 3.0)
-  rack
   rake
   rdiscount
   rspec

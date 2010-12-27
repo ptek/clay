@@ -6,51 +6,67 @@ require 'fileutils'
 require 'yaml'
 
 module Clay
-  VERSION = "0.4"
+  VERSION = "1.0"
   
   def self.init project_name
     print "Creating the folder structure... "
-    Project.init project_name
+    project.init project_name
     puts "complete"
   end
   
   def self.form
     print "Forming... "
-    Project.check_consistency
-    Project.build
+    project.check_consistency
+    project.build
     puts "complete."
   end
   
   def self.run
     puts "Starting server on http://localhost:9292/"
-    Project.prepare_rack_config
+    project.prepare_rack_config
     `rackup config.ru`
   end
+
+  private
+
+  def self.project
+    Project.new project_root
+  end
+
+  def self.project_root
+    `pwd`.strip
+  end
+
 end
 
 class Project
-  def self.init name
+  def initialize project_root
+    @project_root = project_root
+  end
+
+  def init name
     create_directory name
     Dir.chdir name do
+      @project_root = File.join(@project_root, name)
       check_consistency
     end
   end
 
-  def self.check_consistency
+  def check_consistency
     init_clay_project? and layouts_exist? and pages_exist? and public_exist?
   end
     
-  def self.build
-    unless File.directory?("build")
-      create_directory "build"
+  def build
+    unless File.directory?(path("build"))
+      create_directory path("build")
     end
     publish_public
     publish_pages
   end
     
-  def self.prepare_rack_config
-    unless File.exists? "config.ru"
-      file = File.open("config.ru", "w")
+  def prepare_rack_config
+    unless File.exists? path("config.ru")
+      file = File.open(path("config.ru"), "w")
       file.write "require 'rack/clay'\nrun Rack::Clay.new"
       file.close
     end
@@ -58,23 +74,23 @@ class Project
   
   private
   
-  def self.init_clay_project?
-    `touch .clay` unless File.exists? ".clay"
+  def init_clay_project?
+    `touch #{path(".clay")}` unless File.exists? path(".clay")
   end
   
-  def self.layouts_exist?
-    create_directory "layouts"
+  def layouts_exist?
+    create_directory path("layouts")
   end
   
-  def self.pages_exist?
-    create_directory "pages"
+  def pages_exist?
+    create_directory path("pages")
   end
 
-  def self.public_exist?
-    create_directory "public"
+  def public_exist?
+    create_directory path("public")
   end
   
-  def self.create_directory dirname
+  def create_directory dirname
     return if dirname.nil? || dirname.empty?
     unless File.directory?(dirname)
       puts "#{dirname} must be a directory"
@@ -86,90 +102,95 @@ class Project
     end
   end
 
-  def self.publish_pages
-    Dir.glob("pages/*.*").each { |page|
-      template = Template.parse(File.read(page))
-      File.open(File.join("build/", File.basename(page)), "w") {|f| f.write template.render }
+  def publish_pages
+    Dir.glob("pages/*.*").each { |page_path|
+      page = Page.new(page_path)
+      File.open(page.target, "w") {|f| f.write page.content }
     }
   end
 
-  def self.publish_public
+  def publish_public
     FileUtils.cp_r(Dir.glob("public/*"), "build")
   end
 
+  def path filename
+    File.expand_path(File.join("#{@project_root}/", filename))
+  end
+
 end
 
-class Layout
-  def initialize layout_content, insert_content, data = {}
-    @insert_content = insert_content
-    @layout_content = layout_content
-    @data = data
+class Page
+  attr_reader :content
+  def initialize filename
+    case filename.split(".").last
+    when "md", "markdown" then @page_type = "markdown"
+    when "html" then @page_type = "html"
+    else raise "File type of #{filename} unknown.\nMaybe it belongs to the public directory?"
+    end
+    @filename = filename_within_pages filename
+    file_content = File.read(filename)
+    layout, raw_content, data = interpret file_content
+    @content = render raw_content, layout, @page_type, data
   end
   
-  def render
-    @data["yield"] = @insert_content
-    Mustache.render(@layout_content, @data)
-  end
-
-  def self.parse name, content, data = {}
-    return DefaultLayout.new content, data if name == "default"
-    
-    insert_content = content
-    layout_content = File.read "layouts/#{name.downcase}.html"
-    
-    if layout_content.match(/^(\s*---(.+)---\s*)/m)
-      data.merge! YAML.load($2.strip)
-      layout_content = content.gsub($1, "")
-      parent_layout_name = data.delete "layout" if data["layout"]
-      parent_layout = Layout.parse parent_layout_name, layout_content, data
-      layout_content = parent_layout.render
-    end
-    
-    self.new layout_content, insert_content, data
-  end
-end
-
-class DefaultLayout < Layout
-  def initialize content, data = {}
-    @data = data
-    @insert_content = content
-    @layout_content = File.read "layouts/default.html"
-    @layout_content = parse
+  def target
+    file_base = @filename.split(".")[0..-2].join('.')
+    "build/#{file_base}.html"
   end
   
 private
+  def filename_within_pages filename
+    filename.split("/", 2)[1]
+  end
   
-  def parse
-    if @layout_content.match(/^(\s*---(.+)---\s*)/m)
-      @data = @data.merge! YAML.load($2.strip)
-      @layout_content = @layout_content.gsub($1, "")
-    else
-      @layout_content
+  def render content, layout, page_type, data  
+    data['content'] = parsed_content content, data
+    begin
+      layout_content = File.read(layout)
+    rescue NameError
+      raise "Layout #{layout} is missing.\nPlease create one in layouts directory"
+    end
+    rendered_content = Mustache.render(layout_content, data)
+  end
+
+  def parsed_content content, data
+    case @page_type
+    when "markdown" then return Mustache.render(RDiscount.new(content).to_html.strip, data)
+    when "html" then return Mustache.render(content, data)
     end
   end
-end
 
-class Template
-  def initialize content, layout_name = nil, data = {}
-    layout_name ||= "default"
-    @layout = Layout.parse layout_name, content, data
-    File.open("/tmp/debug", "a"){|f| f.write "#{Time.new} #{@layout.inspect}\n"}
-    @content = @layout.render
-    @data = data
-  end
-  
-  def self.parse content
+  def interpret content
+    layout_name = "default"
+    data = {}
     if content.match(/^(\s*---(.+)---\s*)/m)
       data = YAML.load($2.strip)
       content = content.gsub($1, "")
       layout_name = data.delete "layout" if data["layout"]
-      self.new content, layout_name, data
-    else
-      self.new content
     end
+    layout = "layouts/#{layout_name}.html"
+    texts = Dir.glob("texts/*")
+    texts.each{|filename| data.merge! Text.new(filename).to_h }
+    return layout, content, data
   end
-  
-  def render
-    Mustache.render(@content, @data)
+end
+
+class Text
+  attr_reader :content
+  def initialize filename
+    extension = File.extname(filename)
+    @name = File.basename(filename, extension)
+    raise "Text must be a markdown file" unless extension == ".md" or extension == ".markdown"
+    @content = parse File.read(filename)
+  end
+
+  def to_h
+    {"text-#{@name}" => content}
+  end
+
+private
+
+  def parse content
+    RDiscount.new(content).to_html.strip
   end
 end

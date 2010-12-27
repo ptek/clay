@@ -1,34 +1,49 @@
 require 'fileutils'
 require 'rubygems'
 require 'tests/modules/shell'
+require 'tests/modules/bdd'
 
 describe "cli" do
+  include Bdd
+
   before :all do
     clay_binary = clay
   end
   
   it "should create the initial project structure" do
-    given_working_dir "tests/tmp" do
-      #when
-      `#{clay} init project_name`
-    end
-    #then
-    Shell::directories_exist [
-      "tests/tmp/project_name/.clay",
-      "tests/tmp/project_name/pages",
-      "tests/tmp/project_name/layouts"
-    ]
+    given_workdir "tests/tmp"
+    when_{`#{clay} init very_special_project_name`}
+    then_{ |result|
+      Shell::directories_exist [
+                                "tests/tmp/very_special_project_name/.clay",
+                                "tests/tmp/very_special_project_name/pages",
+                                "tests/tmp/very_special_project_name/layouts"
+                               ]
+    }
   end
   
-  it "should convert a single layout file into index page." do
-    given_project_files(:layouts => "tests/data/layouts/default.html", :pages => "tests/data/pages/index.html", :in => "tests/tmp/clay/")
-    given_working_dir "tests/tmp/clay" do
-    #when
-      `#{clay} form`
-    end
-    #then
-    File.directory? "tests/tmp/clay/build"
-    files_should_be_equal "tests/tmp/clay/build/index.html", "tests/data/build/index.html"
+  it "should convert a single page html file into a html page with layout." do
+    given_project_files(:layouts => "tests/data/layouts/default.html", 
+                        :pages => "tests/data/pages/index.html", 
+                        :in => "tests/tmp/test_project/")
+    given_workdir "tests/tmp/test_project"
+    when_{ `#{clay} form` }
+    then_{ |result|
+      File.directory? "tests/tmp/test_project/build"
+      files_should_be_equal "tests/tmp/test_project/build/index.html", "tests/data/build/index.html"
+    }
+  end
+
+  it "should convert a single page markdown file into a html page with layout." do
+    given_project_files(:layouts => "tests/data/layouts/default.html", 
+                        :pages => "tests/data/pages/markdown_page.md", 
+                        :in => "tests/tmp/test_project/")
+    given_workdir "tests/tmp/test_project"
+    when_{ `#{clay} form` }
+    then_{ |result|
+      files_should_be_equal("tests/tmp/test_project/build/markdown_page.html", 
+                            "tests/data/build/markdown_page.html")
+    }
   end
   
   after :each do
@@ -39,11 +54,6 @@ describe "cli" do
 
   def clay
     @clay ||= File.expand_path('bin/clay')
-  end
-  
-  def given_working_dir dir
-    Shell::create_tmp_dir(dir) unless File.directory?(dir)
-    Dir.chdir(dir) {yield}
   end
   
   def given_project_files params
