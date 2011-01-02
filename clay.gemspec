@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Pavlo Kerestey"]
   s.email       = ["pavlo@kerestey.net"]
-  s.homepage    = "http://kerestey.net/clay"
+  s.homepage    = "http://github.com/kerestey/clay"
   s.summary     = "A very lightweight CMS to automatically form a static website."
   s.description = "A lightweight CMS to form a static website with layouts, files and text snippets."
 
@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.rubyforge_project         = "clay"
 
   s.add_dependency "mustache"
-  s.add_dependency "rdiscount"
+  s.add_dependency "bluecloth", ">= 2.0.9"
   s.add_dependency "rack"
 
   s.add_development_dependency "rspec"

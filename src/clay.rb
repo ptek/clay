@@ -1,12 +1,12 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'mustache'
-require 'rdiscount'
+require 'bluecloth'
 require 'fileutils'
 require 'yaml'
 
 module Clay
-  VERSION = "1.3"
+  VERSION = "1.5"
   
   def self.init project_name
     puts "Creating the folder structure... "
@@ -175,7 +175,7 @@ private
 
   def parsed_content content, data
     case @page_type
-    when "markdown" then return Mustache.render(RDiscount.new(content).to_html.strip, data)
+    when "markdown" then return Mustache.render(BlueCloth.new(content).to_html.strip, data)
     when "html" then return Mustache.render(content, data)
     end
   end
@@ -209,6 +209,6 @@ class Text
 private
 
   def parse content
-    RDiscount.new(content).to_html.strip
+    BlueCloth.new(content).to_html.strip
   end
 end
