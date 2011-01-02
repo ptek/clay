@@ -104,8 +104,12 @@ class Project
 
   def publish_pages
     Dir.glob("pages/*.*").each { |page_path|
-      page = Page.new(page_path)
-      File.open(page.target, "w") {|f| f.write page.content }
+      begin
+        page = Page.new(page_path)
+        File.open(page.target, "w") {|f| f.write page.content }
+      rescue RuntimeError => e
+        puts "\nWarning: #{e.message}"
+      end
     }
   end
 
@@ -125,7 +129,7 @@ class Page
     case filename.split(".").last
     when "md", "markdown" then @page_type = "markdown"
     when "html" then @page_type = "html"
-    else raise "File type of #{filename} unknown.\nMaybe it belongs to the public directory?"
+    else raise "File type of #{filename} unknown. Shouldn\'t it be in the public directory?"
     end
     @filename = filename_within_pages filename
     file_content = File.read(filename)
