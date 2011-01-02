@@ -13,7 +13,7 @@ describe "cli" do
   it "should create the initial project structure" do
     given_workdir "tests/tmp"
     when_{`#{clay} init very_special_project_name`}
-    then_{ |result|
+    then_{
       Shell::directories_exist [
                                 "tests/tmp/very_special_project_name/.clay",
                                 "tests/tmp/very_special_project_name/pages",
@@ -28,7 +28,7 @@ describe "cli" do
                         :in => "tests/tmp/test_project/")
     given_workdir "tests/tmp/test_project"
     when_{ `#{clay} form` }
-    then_{ |result|
+    then_{
       File.directory?("tests/tmp/test_project/build").should == true
       files_should_be_equal "tests/tmp/test_project/build/index.html", "tests/data/build/index.html"
     }
@@ -40,17 +40,29 @@ describe "cli" do
                         :in => "tests/tmp/test_project/")
     given_workdir "tests/tmp/test_project"
     when_{ `#{clay} form` }
-    then_{ |result|
+    then_{
       files_should_be_equal("tests/tmp/test_project/build/markdown_page.html", 
                             "tests/data/build/markdown_page.html")
     }
   end
   
+  it "should interpret texts in the texsts folder and put them into the pages" do
+    given_file "<l>{{{content}}}</l>", "tests/tmp/test_project/layouts/default.html"
+    given_file "<p>{{{text-foo}}}</p>", "tests/tmp/test_project/pages/index.html"
+    given_file "Bar", "tests/tmp/test_project/texts/foo.md"
+    given_workdir "tests/tmp/test_project"
+    when_{ `#{clay} form`}
+    then_{
+      file_contents("tests/tmp/test_project/build/index.html").should == "<l><p><p>Bar</p></p></l>"
+    }
+  end
+
   it "should not blow up when presented with an unknown file in the pages directory" do
     given_project_files(:layouts => "tests/data/layouts/default.html",
                         :pages => "tests/data/pages/markdown_page.md",
                         :in => "tests/tmp/test_project/")
     given_file "Random content", "tests/tmp/test_project/pages/markdown_page.html~"
+    given_file "Random content", "tests/tmp/test_project/texts/some_unknown_file.bak"
     given_workdir "tests/tmp/test_project"
     when_{ `#{clay} form` }
     then_{
@@ -59,7 +71,7 @@ describe "cli" do
                             "tests/data/build/markdown_page.html")
     }
   end
-  
+
   after :all do
     `rm -rf tests/tmp`
   end
@@ -85,11 +97,16 @@ describe "cli" do
   end
 
   def given_file content, path
+    FileUtils.mkdir_p(File.dirname(path))
     File.open(path, "w"){|f| f.write content}
   end
 
   def files_should_be_equal file1, file2
     File.read(file1).should == File.read(file2)
+  end
+
+  def file_contents path
+    File.read(path)
   end
 
 end

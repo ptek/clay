@@ -49,18 +49,17 @@ Foo
     }
   end
 
-  it "should interpret a page and render it with text snippets for it from the texts folder" do
+  it "should interpret a page and render it with text snippets provided in the data" do
     given_layout "<div>{{{content}}}</div>", "layouts/default.html"
-    given_text "bar", "texts/foo.md"
     given_page "<span>{{{text-foo}}}</span>", "pages/index.html"
-    when_{Page.new("pages/index.html")}
+    when_{Page.new("pages/index.html", {"text-foo" => "<p>bar</p>"})}
     then_{|it|
       it.content.should == "<div><span><p>bar</p></span></div>"
     }
   end
 
   it "should raise an error if the file type can not be identified properly" do
-    expect_error "File type of pages/index.txt unknown.\nMaybe it belongs to the public directory?"
+    expect_error "File type of pages/index.txt unknown. Shouldn\'t it be in the public directory?"
     when_{Page.new "pages/index.txt"}
   end
 
@@ -82,10 +81,5 @@ private
 
   def given_page content, filename
     File.should_receive(:read).with(filename).once.and_return(content)
-  end
-
-  def given_text content, filename
-    Dir.should_receive(:glob).with("texts/*").and_return([filename])
-    File.should_receive(:read).with(filename).and_return(content)
   end
 end

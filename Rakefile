@@ -34,7 +34,7 @@ end
 
 desc "Install #{gemspec.name}-#{gemspec.version}.gem"
 task :install => [:build] do
-  sh "gem install pkg/#{gemspec.name}-#{gemspec.version}.gem"
+  sh "sudo gem install pkg/#{gemspec.name}-#{gemspec.version}.gem"
 end
 
 desc "Uninstall #{gemspec.name}-#{gemspec.version} gem from the system gems"
@@ -44,5 +44,5 @@ end
 
 desc "Publish #{gemspec.name}-#{gemspec.version}.gem"
 task :publish => [:build] do
-  sh "(sh pkg && gem push #{gemspec.name}-#{gemspec.version}.gem)"
+  sh "(cd pkg && gem push #{gemspec.name}-#{gemspec.version}.gem)"
 end

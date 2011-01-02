@@ -6,19 +6,19 @@ require 'fileutils'
 require 'yaml'
 
 module Clay
-  VERSION = "1.2"
+  VERSION = "1.3"
   
   def self.init project_name
-    print "Creating the folder structure... "
+    puts "Creating the folder structure... "
     project.init project_name
-    puts "complete"
+    puts "OK."
   end
   
   def self.form
-    print "Forming... "
+    puts "Forming... "
     project.check_consistency
     project.build
-    puts "complete."
+    puts "OK."
   end
   
   def self.run
@@ -61,7 +61,8 @@ class Project
       create_directory path("build")
     end
     publish_public
-    publish_pages
+    texts = interpret_texts
+    publish_pages texts
   end
     
   def prepare_rack_config
@@ -102,19 +103,32 @@ class Project
     end
   end
 
-  def publish_pages
-    Dir.glob("pages/*.*").each { |page_path|
-      begin
-        page = Page.new(page_path)
-        File.open(page.target, "w") {|f| f.write page.content }
-      rescue RuntimeError => e
-        puts "\nWarning: #{e.message}"
-      end
-    }
-  end
-
   def publish_public
     FileUtils.cp_r(Dir.glob("public/*"), "build")
+  end
+  
+  def interpret_texts
+    data = {}
+    texts = Dir.glob("texts/*")
+    texts.each do |filename| 
+      begin
+        data.merge! Text.new(filename).to_h 
+      rescue RuntimeError => e
+        puts "Warning: ", e.message
+      end
+    end
+    data
+  end
+
+  def publish_pages data=nil
+    Dir.glob("pages/*.*").each { |page_path|
+      begin
+        page = Page.new(page_path, data)
+        File.open(page.target, "w") {|f| f.write page.content }
+      rescue RuntimeError => e
+        puts "Warning: ", e.message
+      end
+    }
   end
 
   def path filename
@@ -125,7 +139,7 @@ end
 
 class Page
   attr_reader :content
-  def initialize filename
+  def initialize filename, data=nil
     case filename.split(".").last
     when "md", "markdown" then @page_type = "markdown"
     when "html" then @page_type = "html"
@@ -133,7 +147,9 @@ class Page
     end
     @filename = filename_within_pages filename
     file_content = File.read(filename)
-    layout, raw_content, data = interpret file_content
+    data ||= {}
+    layout, raw_content, new_data = interpret file_content
+    data.merge! new_data
     @content = render raw_content, layout, @page_type, data
   end
   
@@ -173,8 +189,6 @@ private
       layout_name = data.delete "layout" if data["layout"]
     end
     layout = "layouts/#{layout_name}.html"
-    texts = Dir.glob("texts/*")
-    texts.each{|filename| data.merge! Text.new(filename).to_h }
     return layout, content, data
   end
 end
