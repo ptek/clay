@@ -6,22 +6,24 @@ There are plans for adding a blogging support in clay too.
 
 ## Getting started
 
-1. Start off by installing the [gem](https://rubygems.org/gems/clay)
+* Start by installing the [gem](https://rubygems.org/gems/clay)
         gem install clay
-2. Init your project using clay
+* Init your project using clay
         clay init <project name>
-3. Create layouts/default.html in the project directory with the following content:
+* Create layouts/default.html in the project directory with the following content:
         <html>
           <title>{{title}}</title>
           <body>{{{content}}}</body>
         </html>
-4. Create pages/index.html in the project directory
+* Create pages/index.html in the project directory
         ---
         title: Home
         ---
         <h1>Hello from clay</h1>
-5. run 
+* run 
         clay form && clay run
+* Preview Your site on http://localhost:9292 or publish it via FTP. 
+  When publishing, You should take only the files in the build folder
 
 ## Howto
 
@@ -47,7 +49,7 @@ You will have to create page named index in the pages directory
 
 ## Licence
 
-[Clay](http://creativecommons.org/licenses/MIT/) by [Pavlo Kerestey](http://kerestey.net) is licensed under a [MIT Licence](http://creativecommons.org/licenses/MIT/). Permissions beyond the scope of this license may be available at <a xmlns:cc="http://creativecommons.org/ns#" href="http://kerestey.net" rel="cc:morePermissions">http://kerestey.net</a>.
+[Clay](https://github.com/kerestey/clay) by [Pavlo Kerestey](http://kerestey.net) is licensed under a [MIT Licence](http://creativecommons.org/licenses/MIT/). Permissions beyond the scope of this license may be available at <a xmlns:cc="http://creativecommons.org/ns#" href="http://kerestey.net" rel="cc:morePermissions">http://kerestey.net</a>.
 
 ## Full text of the licence
 
