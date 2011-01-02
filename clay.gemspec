@@ -10,17 +10,16 @@ Gem::Specification.new do |s|
   s.authors     = ["Pavlo Kerestey"]
   s.email       = ["pavlo@kerestey.net"]
   s.homepage    = "http://kerestey.net/clay"
-  s.summary     = "A sticky clay to automatically form a static website."
-  s.description = "A sticky clay to automatically form a static website using Mustache templates and markdown files."
+  s.summary     = "A very lightweight CMS to automatically form a static website."
+  s.description = "A lightweight CMS to form a static website with layouts, files and text snippets."
 
   s.required_rubygems_version = ">= 1.3.6"
   s.rubyforge_project         = "clay"
 
-  s.add_dependency "mustache", "~> 0.11"
+  s.add_dependency "mustache"
   s.add_dependency "rdiscount"
   s.add_dependency "rack"
 
-  s.add_development_dependency "bundler", "~> 1.0"
   s.add_development_dependency "rspec"
   s.add_development_dependency "rake"
 
@@ -28,6 +27,6 @@ Gem::Specification.new do |s|
   s.executables  = `git ls-files`.split("\n").map{|f| f =~ /^bin\/(.*)/ ? $1 : nil}.compact
   s.require_path = %w[src]
   
-  s.has_rdoc = false
-  #s.extra_rdoc_files	= %w[README.markdown]
+  #s.has_rdoc = true
+  s.extra_rdoc_files	= %w[README.md]
 end
