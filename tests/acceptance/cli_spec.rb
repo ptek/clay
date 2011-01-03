@@ -57,6 +57,20 @@ describe "cli" do
     }
   end
 
+  it "should interpret posts in the post order and provide a key to be accessed in pages" do
+    pending "Find out how to build posts as permalinks the best way"
+    given_file "<l>{{{content}}}</l>", "tests/tmp/test_project/layouts/default.html"
+    given_file "={{#posts}}<span>{{date}}: {{post}}.{{permalink}}</span>{{/posts}}=",
+               "tests/tmp/test_project/pages/index.html"
+    given_file "Foo", "tests/tmp/test_project/posts/2010-01-01-foo.md"
+    given_file "Bar", "tests/tmp/test_project/posts/2010-01-01-bar.md"
+    given_workdir "tests/tmp/test_project"
+    when_{`#{clay} form`}
+    then_{
+      file_contents("tests/tmp/test_project/build/index.html").should == "<l>=<span>01 Jan 2010:<p>Foo</p>./posts/2010-01-01-foo</span><span>01 Jan 2010:<p>Bar</p>./posts/2010-01-01-bar</span>=</l>"
+    }
+  end
+
   it "should not blow up when presented with an unknown file in the pages directory" do
     given_project_files(:layouts => "tests/data/layouts/default.html",
                         :pages => "tests/data/pages/markdown_page.md",

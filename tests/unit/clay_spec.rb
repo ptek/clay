@@ -20,7 +20,7 @@ describe "Clay" do
   it "should run a server on localhost:9393" do
     pending "find out how to test shell commands"
     expect_server_preparation
-    expect_shell_command 'rackup -p 9393'
+    expect_shell_command 'rackup -p 9292'
     when_{Clay.serve}
   end
   
