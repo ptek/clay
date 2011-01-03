@@ -6,7 +6,7 @@ require 'fileutils'
 require 'yaml'
 
 module Clay
-  VERSION = "1.5"
+  VERSION = "1.6"
   
   def self.init project_name
     puts "Creating the folder structure... "
