@@ -1,7 +1,19 @@
-= 1.7 / 2010.01.11
+= 1.7 / Not released yet
 
 * Changed the directories form _public_ to _static_ for 
   static files like css stylesheets, javascript or images...
+  This Change is very important because it will allow
+  users to assign the build directory to be _public_ therefore
+  creating a possibility to serve the static webpages
+  using passenger or nginx - faster and more reliable
+  webservers.
+	
+* Added an option to config.yaml where one can specify
+  the build target directory. This directory will be the
+  one where the built site will be put into along with
+  the static files from the _static_ directory.
+
+* Created Configuration section in Readme
 
 = 1.6 / 2011.01.03
 

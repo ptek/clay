@@ -58,6 +58,19 @@ filename *some-article.md* as *{{{text-some-article}}}* in Your pages. Please
 note, that in pages or layouts You should do a tripple brackets, otherwise
 the tags will be escaped and You will see html instead of nice formatted text.
 
+## Configurations
+
+Clay can be configured to behave specifically to Your development needs.
+To use this, You can create config.yaml in your project directory with 
+following options:
+
+* `autoreload: true|false` - will autoreload Your site, when you run it via
+  `clay run` and something changes in pages, layouts, texts or static files.
+  This way You can just update Your files and immediately see the changes
+  when You reload Your page. This is very useful when You are in the process
+  of the page development or when You write some text and want to see how
+  does it actually look like on the page.
+
 ----------------------------------------
 
 ## Licence
