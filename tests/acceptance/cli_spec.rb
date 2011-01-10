@@ -17,7 +17,9 @@ describe "cli" do
       Shell::directories_exist [
                                 "tests/tmp/very_special_project_name/.clay",
                                 "tests/tmp/very_special_project_name/pages",
-                                "tests/tmp/very_special_project_name/layouts"
+                                "tests/tmp/very_special_project_name/layouts",
+                                "tests/tmp/very_special_project_name/static",
+                                "tests/tmp/very_special_project_name/texts"
                                ]
     }
   end

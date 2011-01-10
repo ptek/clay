@@ -59,7 +59,7 @@ Foo
   end
 
   it "should raise an error if the file type can not be identified properly" do
-    expect_error "File type of pages/index.txt unknown. Shouldn\'t it be in the public directory?"
+    expect_error "File type of pages/index.txt unknown. Shouldn\'t it be in the static directory?"
     when_{Page.new "pages/index.txt"}
   end
 

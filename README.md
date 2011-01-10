@@ -31,7 +31,8 @@ In your project directory You will find following subdirectories
 
 * layouts
 * pages
-* public
+* static
+* texts
    
 The _layouts_ directory is for the global layouts of your pages. 
 There must be a layout called default.html
@@ -40,10 +41,22 @@ In the _pages_ directory You create each page You want to have.
 The pages are created in html or markdown.
 The filename of an html page must be <pagename>.html 
 Markdown pages however can be either <pagename>.md or <pagename>.markdown
-	 
+
 *NOTE* Your pages may have any names You want. However given your domain 
 name is foo.com, and You want that the main page shows up at http://foo.com
 You will have to create page named index in the pages directory
+
+The static files like css stylesheets, javascript files and images/videos
+all should be placed in the _static_ folder. 
+
+The _texts_ is a directory, in which You can create the texts with images, 
+which will then be available to the layouts and the pages. 
+A text file in _texts_ directory must be written in 
+[markdown](http://daringfireball.net/projects/markdown/) and have the extension
+of either .md or .markdown in order to be used. You can then use any text with
+filename *some-article.md* as *{{{text-some-article}}}* in Your pages. Please
+note, that in pages or layouts You should do a tripple brackets, otherwise
+the tags will be escaped and You will see html instead of nice formatted text.
 
 ----------------------------------------
 

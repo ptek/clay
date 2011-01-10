@@ -53,14 +53,14 @@ class Project
   end
 
   def check_consistency
-    init_clay_project? and layouts_exist? and pages_exist? and public_exist?
+    init_clay_project? and layouts_exist? and pages_exist? and static_exist? and texts_exist?
   end
     
   def build
     unless File.directory?(path("build"))
       create_directory path("build")
     end
-    publish_public
+    publish_static
     texts = interpret_texts
     publish_pages texts
   end
@@ -87,8 +87,12 @@ class Project
     create_directory path("pages")
   end
 
-  def public_exist?
-    create_directory path("public")
+  def static_exist?
+    create_directory path("static")
+  end
+
+  def texts_exist?
+    create_directory path("texts")
   end
   
   def create_directory dirname
@@ -103,8 +107,8 @@ class Project
     end
   end
 
-  def publish_public
-    FileUtils.cp_r(Dir.glob("public/*"), "build")
+  def publish_static
+    FileUtils.cp_r(Dir.glob("static/*"), "build")
   end
   
   def interpret_texts
@@ -143,7 +147,7 @@ class Page
     case filename.split(".").last
     when "md", "markdown" then @page_type = "markdown"
     when "html" then @page_type = "html"
-    else raise "File type of #{filename} unknown. Shouldn\'t it be in the public directory?"
+    else raise "File type of #{filename} unknown. Shouldn\'t it be in the static directory?"
     end
     @filename = filename_within_pages filename
     file_content = File.read(filename)
