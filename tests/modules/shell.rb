@@ -21,4 +21,25 @@ module Shell
       end
     end
   end
+  
+  def self.run_parallel command    
+    pid = fork do 
+      $stdout.reopen(File.open("/dev/null","w"))
+      $stderr.reopen(File.open("/dev/null","w"))
+      exec command
+    end
+    Process.detach pid
+    sleep 1
+    @spawned_processes ||= []
+    @spawned_processes << pid
+    pid
+  end
+
+  def self.stop pid
+    Process.kill "SIGKILL", pid
+  end
+
+  def self.stop_all_parallel_processes
+    @spawned_processes = @spawned_processes.map { |pid| self.stop pid; nil }.compact
+  end
 end

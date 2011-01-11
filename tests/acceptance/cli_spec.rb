@@ -1,10 +1,13 @@
 require 'fileutils'
-require 'rubygems'
 require 'tests/modules/shell'
 require 'tests/modules/bdd'
+require 'tests/modules/clay'
+require 'tests/modules/files'
 
 describe "cli" do
   include Bdd
+  include Files
+  include Clay
 
   before :all do
     clay_binary = clay
@@ -88,41 +91,21 @@ describe "cli" do
     }
   end
 
-  after :all do
+  it "forms the site into a target directory specified in config.yaml file" do
+    given_file "", "tests/tmp/test_project/.clay"
+    given_file "<h>{{{content}}}</h>", "tests/tmp/test_project/layouts/default.html"
+    given_file "<p>Bar</p>", "tests/tmp/test_project/pages/foo.html"
+    given_file "target_dir: test_target", "tests/tmp/test_project/config.yaml"
+    given_workdir "tests/tmp/test_project"
+    when_{ `#{clay} form`}
+    then_{
+      File.directory?("tests/tmp/test_project/test_target").should == true
+      file_contents("tests/tmp/test_project/test_target/foo.html").should == "<h><p>Bar</p></h>"
+    }
+  end
+
+  after :each do
     `rm -rf tests/tmp`
-  end
-
-  private
-
-  def clay
-    @clay ||= File.expand_path('bin/clay')
-  end
-  
-  def given_project_files params
-    dir = params[:in]
-    FileUtils.rm_rf dir if File.exists?(dir)
-    Shell::create_tmp_dir dir
-    layouts = File.join(dir, "layouts/")
-    unless params[:layouts].nil?
-      FileUtils.mkdir_p(layouts) and FileUtils.cp(params[:layouts], layouts)
-    end
-    pages = File.join(dir, "pages/")
-    unless params[:pages].nil?
-      FileUtils.mkdir_p(pages) and FileUtils.cp(params[:pages], pages)
-    end
-  end
-
-  def given_file content, path
-    FileUtils.mkdir_p(File.dirname(path))
-    File.open(path, "w"){|f| f.write content}
-  end
-
-  def files_should_be_equal file1, file2
-    File.read(file1).should == File.read(file2)
-  end
-
-  def file_contents path
-    File.read(path)
   end
 
 end

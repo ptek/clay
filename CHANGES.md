@@ -13,7 +13,7 @@
   one where the built site will be put into along with
   the static files from the _static_ directory.
 
-* Created Configuration section in Readme
+* Created Configuration howto in README
 
 = 1.6 / 2011.01.03
 

@@ -8,27 +8,40 @@ require 'yaml'
 module Clay
   VERSION = "1.7"
   
-  def self.init project_name
-    puts "Creating the folder structure... "
-    project.init project_name
-    puts "OK."
+  def self.init project_name, silent=false
+    mute(silent) {
+      puts "Creating the folder structure... "
+      project.init project_name
+      puts "OK."
+    }
   end
   
-  def self.form
-    puts "Forming... "
-    project.check_consistency
-    project.build
-    puts "OK."
+  def self.form silent=false
+    mute(silent){
+      puts "Forming... "
+      project.check_consistency
+      project.build
+      puts "OK."
+    }
   end
   
-  def self.run
-    puts "Starting server on http://localhost:9292/"
-    project.prepare_rack_config
-    `rackup config.ru`
+  def self.run silent=false
+    mute(silent) {
+      puts "Starting server on http://localhost:9292/"
+      project.prepare_rack_config
+      exec "rackup config.ru"
+    }
   end
 
   private
 
+  def self.mute silent
+    stdout = STDOUT.dup
+    $stdout.reopen(File.open("/dev/null", "w")) if silent
+    yield
+    $stdout.reopen(stdout)
+  end
+  
   def self.project
     Project.new project_root
   end
@@ -57,12 +70,13 @@ class Project
   end
     
   def build
-    unless File.directory?(path("build"))
-      create_directory path("build")
+    target = configs["target_dir"] ? configs["target_dir"] : "build"
+    unless File.directory?(path(target))
+      create_directory path(target)
     end
-    publish_static
+    publish_static target
     texts = interpret_texts
-    publish_pages texts
+    publish_pages target, texts
   end
     
   def prepare_rack_config
@@ -72,8 +86,17 @@ class Project
       file.close
     end
   end
+
+  def configs
+    result = YAML.load(File.read(path("config.yaml")))
+    conf_options = result.keys - ["autoreload", "target_dir"]
+    raise "ERROR in config.yaml" if conf_options.length > 0
+    result
+  rescue Errno::ENOENT
+    {}
+  end
   
-  private
+private
   
   def init_clay_project?
     `touch #{path(".clay")}` unless File.exists? path(".clay")
@@ -107,8 +130,8 @@ class Project
     end
   end
 
-  def publish_static
-    FileUtils.cp_r(Dir.glob("static/*"), "build")
+  def publish_static target
+    FileUtils.cp_r(Dir.glob("static/*"), target)
   end
   
   def interpret_texts
@@ -124,10 +147,10 @@ class Project
     data
   end
 
-  def publish_pages data=nil
+  def publish_pages target, data=nil
     Dir.glob("pages/*.*").each { |page_path|
       begin
-        page = Page.new(page_path, data)
+        page = Page.new(page_path, target, data)
         File.open(page.target, "w") {|f| f.write page.content }
       rescue RuntimeError => e
         puts "Warning: ", e.message
@@ -143,12 +166,13 @@ end
 
 class Page
   attr_reader :content
-  def initialize filename, data=nil
+  def initialize filename, target=nil, data=nil
     case filename.split(".").last
     when "md", "markdown" then @page_type = "markdown"
     when "html" then @page_type = "html"
     else raise "File type of #{filename} unknown. Shouldn\'t it be in the static directory?"
     end
+    @target = target.nil? ? "build" : target
     @filename = filename_within_pages filename
     file_content = File.read(filename)
     data ||= {}
@@ -159,7 +183,7 @@ class Page
   
   def target
     file_base = @filename.split(".")[0..-2].join('.')
-    "build/#{file_base}.html"
+    "#{@target}/#{file_base}.html"
   end
   
 private

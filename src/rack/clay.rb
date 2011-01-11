@@ -12,19 +12,13 @@ module Rack
       if ::File.exist?(@configfile)
         puts "Reading configs... "
         @config = ::YAML.load(::File.read(@configfile))
-        @config = (@config.class == FalseClass ? {} : @config)
-        if @config[:destination].nil?
-          @path = opts[:destination].nil? ? "build" : opts[:destination]
-        else
-          opts.merge!(@config)
-          @path = @config[:destination].nil? ? "build" : @config[:destination]
-        end
+        @config = @config ? @config : {} 
         puts @config.inspect
         puts "Ready."
       end
 
       @path = "build"
-      @path = @config["build_path"] if @config["build_path"]
+      @path = @config["target_dir"] if @config["target_dir"]
       @mimes = Rack::Mime::MIME_TYPES.map{|k,v| /#{k.gsub('.','\.')}$/i }
     end
     def call(env)
@@ -82,11 +76,11 @@ module Rack
         new_file_hashes = get_file_hashes
         changes = compare_file_hashes old_file_hashes, new_file_hashes.to_json
         unless changes
-          begin                                   
-            require 'clay'                        
-            ::Clay.form                           
-          rescue LoadError                        
-            raise "Could not load clay"
+          begin
+            require 'clay'
+            ::Clay.form
+          rescue LoadError
+            raise "Could not load clay. Please reinstall: [sudo] gem install clay"
           end
         end
         ::File.open(clayfile, "w") {|f| f.write(new_file_hashes.to_json)}
@@ -94,6 +88,7 @@ module Rack
     end
 
     def get_file_hashes
+      return {"Build_Path_Is_Empty"=>true} unless ::File.exists? @path
       files = ::Dir.glob("**/*") - [@path] - ::Dir.glob(@path + "/**/*")
       file_hashes_array = files.map {|filename| [filename, file_hash(filename)]}
       file_hashes = Hash[*file_hashes_array.flatten]

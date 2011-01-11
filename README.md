@@ -64,13 +64,19 @@ Clay can be configured to behave specifically to Your development needs.
 To use this, You can create config.yaml in your project directory with 
 following options:
 
-* `autoreload: true|false` - will autoreload Your site, when you run it via
+* `autoreload: true|false` - This option will autoreload Your site, when you run it via
   `clay run` and something changes in pages, layouts, texts or static files.
-  This way You can just update Your files and immediately see the changes
-  when You reload Your page. This is very useful when You are in the process
-  of the page development or when You write some text and want to see how
-  does it actually look like on the page.
+  This way You can just update the files and immediately see the changes
+  when You reload the page. This is very useful for the page development 
+  or when You write some text and want to see how does it actually look 
+  like on the page.
 
+* `target_dir: <custom/target/directory>` - This option makes clay generate the site into
+  a specific location. For example a pubic directory. This directory can be then served
+  by a webserver. This way one can install clay on a remote server and update the site
+  on the fly. It also provides more flexibility in choosing the place of output.
+  Please make sure, that the target is writable.
+	
 ----------------------------------------
 
 ## Licence

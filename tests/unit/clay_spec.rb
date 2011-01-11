@@ -7,21 +7,14 @@ describe "Clay" do
   it "should initialize a working directory using a project name" do
     given_project `pwd`.strip
     expect_init "test_project"
-    when_{Clay.init "test_project"}
+    when_{Clay.init "test_project", silent=true}
   end
   
   it "should render the project" do
     given_project `pwd`.strip
     expect_consistency_check
     expect_build
-    when_{Clay.form}
-  end
-  
-  it "should run a server on localhost:9393" do
-    pending "find out how to test shell commands"
-    expect_server_preparation
-    expect_shell_command 'rackup -p 9292'
-    when_{Clay.serve}
+    when_{Clay.form silent=true}
   end
   
   def expect_init name
