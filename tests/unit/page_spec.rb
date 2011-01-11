@@ -52,7 +52,7 @@ Foo
   it "should interpret a page and render it with text snippets provided in the data" do
     given_layout "<div>{{{content}}}</div>", "layouts/default.html"
     given_page "<span>{{{text-foo}}}</span>", "pages/index.html"
-    when_{Page.new("pages/index.html", {"text-foo" => "<p>bar</p>"})}
+    when_{Page.new("pages/index.html", nil, {"text-foo" => "<p>bar</p>"})}
     then_{|it|
       it.content.should == "<div><span><p>bar</p></span></div>"
     }
