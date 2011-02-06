@@ -6,8 +6,8 @@ require 'fileutils'
 require 'yaml'
 
 module Clay
-  VERSION = "1.7"
-  
+  VERSION = "1.7.1"
+
   def self.init project_name, silent=false
     mute(silent) {
       puts "Creating the folder structure... "
@@ -15,7 +15,7 @@ module Clay
       puts "OK."
     }
   end
-  
+
   def self.form silent=false
     mute(silent){
       puts "Forming... "
@@ -24,7 +24,7 @@ module Clay
       puts "OK."
     }
   end
-  
+
   def self.run silent=false
     mute(silent) {
       puts "Starting server on http://localhost:9292/"
@@ -41,7 +41,7 @@ module Clay
     yield
     $stdout.reopen(stdout)
   end
-  
+
   def self.project
     Project.new project_root
   end
@@ -68,7 +68,7 @@ class Project
   def check_consistency
     init_clay_project? and layouts_exist? and pages_exist? and static_exist? and texts_exist?
   end
-    
+
   def build
     target = configs["target_dir"] ? configs["target_dir"] : "build"
     unless File.directory?(path(target))
@@ -78,7 +78,7 @@ class Project
     texts = interpret_texts
     publish_pages target, texts
   end
-    
+
   def prepare_rack_config
     unless File.exists? path("config.ru")
       file = File.open(path("config.ru"), "w")
@@ -95,17 +95,17 @@ class Project
   rescue Errno::ENOENT
     {}
   end
-  
+
 private
-  
+
   def init_clay_project?
     `touch #{path(".clay")}` unless File.exists? path(".clay")
   end
-  
+
   def layouts_exist?
     create_directory path("layouts")
   end
-  
+
   def pages_exist?
     create_directory path("pages")
   end
@@ -117,7 +117,7 @@ private
   def texts_exist?
     create_directory path("texts")
   end
-  
+
   def create_directory dirname
     return if dirname.nil? || dirname.empty?
     unless File.directory?(dirname)
@@ -133,13 +133,13 @@ private
   def publish_static target
     FileUtils.cp_r(Dir.glob("static/*"), target)
   end
-  
+
   def interpret_texts
     data = {}
-    texts = Dir.glob("texts/*")
-    texts.each do |filename| 
+    texts = Dir.glob("texts/*") # =>
+    texts.each do |filename|
       begin
-        data.merge! Text.new(filename).to_h 
+        data.merge! Text.new(filename).to_h
       rescue RuntimeError => e
         puts "Warning: ", e.message
       end
@@ -180,18 +180,18 @@ class Page
     data.merge! new_data
     @content = render raw_content, layout, @page_type, data
   end
-  
+
   def target
     file_base = @filename.split(".")[0..-2].join('.')
     "#{@target}/#{file_base}.html"
   end
-  
+
 private
   def filename_within_pages filename
     filename.split("/", 2)[1]
   end
-  
-  def render content, layout, page_type, data  
+
+  def render content, layout, page_type, data
     data['content'] = parsed_content content, data
     begin
       layout_content = File.read(layout)

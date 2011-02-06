@@ -1,4 +1,8 @@
-= 1.7 / Not released yet
+= 1.7.1 / 2011.01.11
+
+* Fixed post install message
+
+= 1.7 / 2011.01.11
 
 * Changed the directories form _public_ to _static_ for 
   static files like css stylesheets, javascript or images...

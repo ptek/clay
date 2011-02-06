@@ -44,7 +44,7 @@ Gem::Specification.new do |s|
   forming the site.
 
   Additionally You can now specify the build directory in config.yaml file
-  by adding build_directory: "/path/to/the/build/dir". Your site will be 
+  by adding target_dir: "/path/to/the/build/dir". Your site will be 
   served out of this directory when You run $ clay run
 
   These Changes will allow to use passenger and putting the built site into
