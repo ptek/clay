@@ -6,7 +6,7 @@ require 'fileutils'
 require 'yaml'
 
 module Clay
-  VERSION = "1.7.1"
+  VERSION = "1.7.2"
 
   def self.init project_name, silent=false
     mute(silent) {
@@ -50,6 +50,12 @@ module Clay
     `pwd`.strip
   end
 
+end
+
+class Hash
+  def deep_copy
+    Marshal.load(Marshal.dump(self))
+  end
 end
 
 class Project
@@ -147,9 +153,10 @@ private
     data
   end
 
-  def publish_pages target, data=nil
+  def publish_pages target, initial_data=nil
     Dir.glob("pages/*.*").each { |page_path|
       begin
+        data = initial_data.deep_copy
         page = Page.new(page_path, target, data)
         File.open(page.target, "w") {|f| f.write page.content }
       rescue RuntimeError => e
