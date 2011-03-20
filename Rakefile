@@ -1,6 +1,5 @@
 require 'rubygems'
 require 'rubygems/specification'
-require 'bundler'
 
 def gemspec_file
   'clay.gemspec'

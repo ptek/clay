@@ -1,5 +1,4 @@
 require 'rubygems'
-require 'bundler/setup'
 require 'mustache'
 require 'bluecloth'
 require 'fileutils'
