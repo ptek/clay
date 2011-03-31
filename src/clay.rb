@@ -5,7 +5,7 @@ require 'fileutils'
 require 'yaml'
 
 module Clay
-  VERSION = "1.7.3"
+  VERSION = "1.7.4"
 
   def self.init project_name, silent=false
     mute(silent) {
@@ -104,7 +104,7 @@ class Project
 private
 
   def init_clay_project?
-    `touch #{path(".clay")}` unless File.exists? path(".clay")
+    `touch '#{path(".clay")}'` unless File.exists? path(".clay")
   end
 
   def layouts_exist?
