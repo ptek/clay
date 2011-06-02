@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Pavlo Kerestey"]
   s.email       = ["pavlo@kerestey.net"]
-  s.homepage    = "http://github.com/kerestey/clay"
+  s.homepage    = "http://kerestey.github.com/clay"
   s.summary     = "A lightweight CMS for static websites"
   s.description = "A lightweight CMS to form a static website with layouts, files and text snippets."
 
