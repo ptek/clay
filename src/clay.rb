@@ -5,7 +5,7 @@ require 'fileutils'
 require 'yaml'
 
 module Clay
-  VERSION = "1.7.4"
+  VERSION = "1.7.5"
 
   def self.init project_name, silent=false
     mute(silent) {
