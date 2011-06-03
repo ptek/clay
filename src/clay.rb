@@ -1,11 +1,11 @@
 require 'rubygems'
 require 'mustache'
-require 'bluecloth'
+require 'kramdown'
 require 'fileutils'
 require 'yaml'
 
 module Clay
-  VERSION = "1.7.5"
+  VERSION = "1.7.6"
 
   def self.init project_name, silent=false
     mute(silent) {
@@ -209,7 +209,7 @@ private
 
   def parsed_content content, data
     case @page_type
-    when "markdown" then return Mustache.render(BlueCloth.new(content).to_html.strip, data)
+    when "markdown" then return Mustache.render((Kramdown::Document.new content, :auto_ids => false).to_html.strip, data)
     when "html" then return Mustache.render(content, data)
     end
   end
@@ -243,6 +243,6 @@ class Text
 private
 
   def parse content
-    BlueCloth.new(content).to_html.strip
+    Kramdown::Document.new(content).to_html.strip
   end
 end
