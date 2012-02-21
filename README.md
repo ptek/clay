@@ -8,29 +8,29 @@ There are plans for adding a blogging support in clay too.
 
 * Start by installing the [gem](https://rubygems.org/gems/clay)
 
-    gem install clay
+        gem install clay
 
 * Init your project using clay
 
-    clay init <project name>
+        clay init <project name>
 
 * Create layouts/default.html in the project directory with the following content:
 
-    <html>
-      <title>{{title}}</title>
-      <body>{{{content}}}</body>
-    </html>
+        <html>
+          <title>{{title}}</title>
+          <body>{{{content}}}</body>
+        </html>
 
 * Create pages/index.html in the project directory
 
-    ---
-    title: Home
-    ---
-    <h1>Hello from clay</h1>
+        ---
+        title: Home
+        ---
+        <h1>Hello from clay</h1>
 
 * run 
 
-    clay form && clay run
+        clay form && clay run
 
 * Preview Your site on http://localhost:9292 or publish it via FTP. 
   When publishing, You should take only the files in the build folder
