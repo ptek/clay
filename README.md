@@ -6,6 +6,8 @@ There are plans for adding a blogging support in clay too.
 
 ## Getting started
 
+### NOTE: Please Note, that clay works only with ruby 1.8.7 so far.
+
 * Start by installing the [gem](https://rubygems.org/gems/clay)
 
         gem install clay
@@ -91,7 +93,7 @@ following options:
 
 ## Licence
 
-[Clay](https://github.com/kerestey/clay) by [Pavlo Kerestey](http://kerestey.net) is licensed under a [MIT Licence](http://creativecommons.org/licenses/MIT/). Permissions beyond the scope of this license may be available at <a xmlns:cc="http://creativecommons.org/ns#" href="http://kerestey.net" rel="cc:morePermissions">http://kerestey.net</a>.
+[Clay](https://github.com/ptek/clay) by [Pavlo Kerestey](http://kerestey.net) is licensed under a [MIT Licence](http://creativecommons.org/licenses/MIT/). Permissions beyond the scope of this license may be available at <a xmlns:cc="http://creativecommons.org/ns#" href="http://kerestey.net" rel="cc:morePermissions">http://kerestey.net</a>.
 
 ## Full text of the licence
 
